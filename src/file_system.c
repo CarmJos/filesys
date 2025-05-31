@@ -39,7 +39,20 @@ Disk disk_create(const int rows, const int cols) {
     return disk;
 }
 
-void disk_write(Disk* disk, int row_start, int col_start, const char* content, const size_t size) {
+
+void disk_sort(const Disk* disk) {
+    for (int i = 0; i < disk->count - 1; i++) {
+        for (int j = 0; j < disk->count - i - 1; j++) {
+            if (disk->files[j].size < disk->files[j + 1].size) {
+                const FileMeta tmp = disk->files[j];
+                disk->files[j] = disk->files[j + 1];
+                disk->files[j + 1] = tmp;
+            }
+        }
+    }
+}
+
+void disk_write(const Disk* disk, const int row_start, const int col_start, const char* content, const size_t size) {
     if (disk == NULL || disk->storage == NULL || content == NULL) {
         return; // 未初始化的磁盘
     }
@@ -204,11 +217,18 @@ FileMeta* file_write(Disk* disk, const char* filename, const char* content) {
     // 写入内容
     disk_write(disk, pos.row, pos.col, content, content_len);
 
-    // 添加到文件列表
-    disk->files[disk->count] = new_file;
-    disk->count++;
+    // 插入到文件列表的合适位置（按大小降序）
+    int insert_index = 0;
+    while (insert_index < disk->count && disk->files[insert_index].size > content_len) {
+        insert_index++;
+    }
+    for (int i = disk->count; i > insert_index; i--) {
+        disk->files[i] = disk->files[i - 1]; // 向后移动文件
+    }
+    disk->files[insert_index] = new_file; // 插入新文件
+    disk->count++; // 增加文件计数
 
-    return &disk->files[disk->count - 1];
+    return &disk->files[insert_index]; // 返回新写入的文件元数据
 }
 
 File file_read(const Disk* disk, const char* filename) {
@@ -328,4 +348,5 @@ void disk_defragment(Disk* disk) {
         free(temp_contents[i]);
     }
     free(temp_contents);
+    disk_sort(disk); // 对文件进行排序
 }

@@ -64,7 +64,7 @@ Disk disk_create(int rows, int cols);
  *
  * @param disk The disk to defragment
  */
-void disk_defragment(Disk* disk);
+void disk_defragment(const Disk* disk);
 
 /**
  * Write contents (could be empty) to specific file in disk.
@@ -73,7 +73,7 @@ void disk_defragment(Disk* disk);
  * @param content File contents
  * @return Written file pointer
  */
-FileMeta* file_write(Disk* disk, const char* filename, const char* content);
+FileMeta* file_write(const Disk* disk, const char* filename, const char* content);
 
 /**
  * Find fine with specific name in disk
@@ -89,7 +89,7 @@ FileMeta* file_find(const Disk* disk, const char* filename);
  * @param filename The file name
  * @return true if file exists.
  */
-inline bool file_exists(Disk* disk, const char* filename) {
+inline bool file_exists(const Disk* disk, const char* filename) {
     return file_find(disk, filename) != NULL;
 }
 
@@ -107,7 +107,7 @@ File file_read(const Disk* disk, const char* filename);
  * @param filename  The file name
  * @return Result, false if file not exists.
  */
-bool file_delete(Disk* disk, const char* filename);
+bool file_delete(const Disk* disk, const char* filename);
 
 
 #endif

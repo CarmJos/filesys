@@ -7,18 +7,6 @@
 
 Disk disk;
 
-void sort(FileMeta* files, const int size) {
-    for (int i = 0; i < size - 1; i++) {
-        for (int j = 0; j < size - i - 1; j++) {
-            if (files[j].size < files[j + 1].size) {
-                FileMeta temp = files[j];
-                files[j] = files[j + 1];
-                files[j + 1] = temp;
-            }
-        }
-    }
-}
-
 bool disk_uninitialized() {
     if (disk.storage == NULL) {
         printf("Disk not initialized. Please run 'init <rows> <cols>' first.\n");
@@ -27,7 +15,7 @@ bool disk_uninitialized() {
     return false;
 }
 
-bool cmd_disk_init(char** args, unsigned char length) {
+bool cmd_disk_init(char** args, const unsigned char length) {
     if (length != 2) return false;
 
     int tracks, sectors;
@@ -45,13 +33,16 @@ bool cmd_disk_init(char** args, unsigned char length) {
     return true;
 }
 
+// ReSharper disable once CppParameterNeverUsed
+// ReSharper disable once CppDFAConstantFunctionResult
 bool cmd_disk_defragment(char** args, unsigned char length) {
     if (disk_uninitialized()) return true;
     disk_defragment(&disk);
     return true;
 }
 
-bool cmd_write(char** args, unsigned char length) {
+
+bool cmd_write(char** args, const unsigned char length) {
     if (length < 2) return false;
     if (disk_uninitialized()) return true;
     const char* filename = args[0];
@@ -64,7 +55,7 @@ bool cmd_write(char** args, unsigned char length) {
         }
     }
 
-    File exists = file_read(&disk, filename);
+    const File exists = file_read(&disk, filename);
     if (exists.meta != NULL) {
         printf("\nFile '%s' already exists with the following content:\n", filename);
         printf("-------------------------------------------------\n");
@@ -72,7 +63,7 @@ bool cmd_write(char** args, unsigned char length) {
         printf("-------------------------------------------------\n");
         printf("Overwriting existing file '%s', sure? (y/n)\n", filename);
 
-        // 等待输入 Y 或 y 或 N 或 n，默认为 Y
+        // 等待输入 Y/y 或 N/n
         char confirm[3];
         fgets(confirm, sizeof(confirm), stdin);
         if (confirm[0] != 'Y' && confirm[0] != 'y') {
@@ -83,15 +74,20 @@ bool cmd_write(char** args, unsigned char length) {
     }
 
 
-    FileMeta* wrote = file_write(&disk, filename, content);
+    const FileMeta* wrote = file_write(&disk, filename, content);
     if (wrote != NULL) {
         printf(
             "Wrote file '%s' at position [%d,%d] with size %llu.\n",
             filename, wrote->position.col + 1, wrote->position.row + 1, wrote->size
         );
     }
+    else if (disk.count > MAX_FILE_COUNT) {
+        printf("Failed to write file '%s', reach file limit (%d).\n", filename, MAX_FILE_COUNT);
+        printf("Try to run 'rm <file>' to delete some files.\n");
+    }
     else {
         printf("Failed to write file '%s'. No enough space, required %llu.\n", filename, strlen(content));
+        printf("Try to run 'defragment' to free up space.\n");
     }
 
     return true;
@@ -114,7 +110,7 @@ bool cmd_cat(char** args, const unsigned char length) {
     if (length < 1) return false;
     if (disk_uninitialized()) return true;
     const char* filename = args[0];
-    File file = file_read(&disk, filename);
+    const File file = file_read(&disk, filename);
     if (file.content == NULL) {
         printf("File '%s' not found.\n", filename);
     }
@@ -124,6 +120,8 @@ bool cmd_cat(char** args, const unsigned char length) {
     return true;
 }
 
+// ReSharper disable once CppParameterNeverUsed
+// ReSharper disable once CppDFAConstantFunctionResult
 bool cmd_ls(char** args, unsigned char length) {
     if (disk_uninitialized()) return true;
     if (disk.count == 0) {
@@ -152,11 +150,8 @@ bool cmd_ls(char** args, unsigned char length) {
     printf("\n----------------------------------\n");
     printf("strategy=%d , total: %d\n", disk.strategy, disk.count);
     printf("# \t@pos \t@size \t@name \n");
-
-
-    sort(disk.files, disk.count);
     for (int i = 0; i < disk.count; i++) {
-        FileMeta meta = disk.files[i];
+        const FileMeta meta = disk.files[i];
         printf(
             "|- \t[%d,%d] \t%llu \t%s \n",
             meta.position.col + 1, meta.position.row + 1,
@@ -166,7 +161,7 @@ bool cmd_ls(char** args, unsigned char length) {
     return true;
 }
 
-bool cmd_disk_strategy(char** args, unsigned char length) {
+bool cmd_disk_strategy(char** args, const unsigned char length) {
     if (length != 1) return false;
     if (disk_uninitialized()) return true;
 
