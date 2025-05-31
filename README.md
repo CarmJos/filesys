@@ -1,10 +1,12 @@
-# 文件系统模拟
+# 简易文件系统模拟
 
-<img src="logo.png" width="64px"  height="64px" alt="Project logo" align="right">
+<img src="logo.png" width="120px"  height="120px" alt="Project logo" align="right">
 
-![CodeSize](https://img.shields.io/github/languages/code-size/ArtformGames/ResidenceList)
+![CodeSize](https://img.shields.io/github/languages/code-size/CarmJos/filesys)
 
 编码实现简易的文件系统，功能包括磁盘初始化、新建文件、删除文件、更新文件、查找文件、文件统计、磁盘统计、分配策略选择。
+
+> 本项目系 [《操作系统》]() 课程设计的实践项目，旨在帮助理解文件系统的基本原理和实现方式。
 
 ## 需求
 
