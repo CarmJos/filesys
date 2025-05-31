@@ -1,5 +1,8 @@
 # 文件系统模拟
 
+<img src="logo.png" width="200px"  height="200px" alt="Project logo" align="right">
+
+
 编码实现简易的文件系统，功能包括磁盘初始化、新建文件、删除文件、更新文件、查找文件、文件统计、磁盘统计、分配策略选择。
 
 ## 需求
@@ -126,5 +129,6 @@ defragment
 
 ## Supports
 
-万分感谢 Jetbrains 慷慨地提供了许可，让我们可以专心至于此项目及其他开源项目上。
+万分感谢 Jetbrains 慷慨地提供了开源许可证，让我可以专心致力于开发此项目及其他开源项目之上。
+
 [![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/CarmJos/CWorks)
