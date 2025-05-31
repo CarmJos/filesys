@@ -1,7 +1,8 @@
 # 文件系统模拟
 
-<img src="logo.png" width="200px"  height="200px" alt="Project logo" align="right">
+<img src="logo.png" width="64px"  height="64px" alt="Project logo" align="right">
 
+![CodeSize](https://img.shields.io/github/languages/code-size/ArtformGames/ResidenceList)
 
 编码实现简易的文件系统，功能包括磁盘初始化、新建文件、删除文件、更新文件、查找文件、文件统计、磁盘统计、分配策略选择。
 
